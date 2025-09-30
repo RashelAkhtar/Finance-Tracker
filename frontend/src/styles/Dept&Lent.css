@@ -1,0 +1,232 @@
+/* Panel Container */
+.dept-lent-container {
+  padding: 24px 18px 32px 18px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #fff;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Form */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.input {
+  padding: 9px 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  font-size: 1.05rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.input:focus {
+  border-color: #38a169;
+}
+
+/* Action Buttons Row */
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  transition: all 0.2s;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+  outline: none;
+}
+
+.action-btn.dept {
+  background: linear-gradient(135deg, #f56565, #e53e3e);
+}
+
+.action-btn.dept.active,
+.action-btn.dept:focus {
+  background: linear-gradient(135deg, #e53e3e, #c53030);
+}
+
+.action-btn.lent {
+  background: linear-gradient(135deg, #48bb78, #38a169);
+}
+
+.action-btn.lent.active,
+.action-btn.lent:focus {
+  background: linear-gradient(135deg, #38a169, #2f855a);
+}
+
+.submit-action-btn {
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, #4299e1, #3182ce);
+  box-shadow: 0 3px 6px rgba(49, 130, 206, 0.1);
+  transition: background 0.2s, transform 0.2s;
+}
+
+.submit-action-btn:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+}
+
+/* Summary Cards */
+.summary-cards {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.summary-card {
+  flex: 1;
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 14px 10px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.dept-card h3,
+.dept-card .amount {
+  color: #e53e3e;
+}
+
+.lent-card h3,
+.lent-card .amount {
+  color: #38a169;
+}
+
+/* Records Section */
+.records-section {
+  margin-top: 10px;
+}
+
+.records-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.records-header h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  color: #2d3748;
+}
+
+.clear-btn {
+  background: none;
+  border: none;
+  color: #e53e3e;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 0.98rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.clear-btn:hover {
+  background: #ffe5e5;
+}
+
+.empty-state {
+  color: #718096;
+  font-style: italic;
+  text-align: center;
+  margin: 18px 0;
+}
+
+.records-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.record-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  border-radius: 7px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  font-size: 1rem;
+}
+
+.record-item.dept {
+  border-left: 4px solid #e53e3e;
+}
+
+.record-item.lent {
+  border-left: 4px solid #38a169;
+}
+
+.record-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.record-name {
+  font-weight: 500;
+  color: #2d3748;
+}
+
+.record-date {
+  font-size: 0.92rem;
+  color: #718096;
+}
+
+.record-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.record-amount {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.delete-record-btn {
+  background: none;
+  border: none;
+  color: #e53e3e;
+  font-size: 1.3rem;
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 0 6px;
+  transition: background 0.2s;
+}
+
+.delete-record-btn:hover {
+  background: #ffe5e5;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .dept-lent-container {
+    padding: 12px 2vw 24px 2vw;
+  }
+  .summary-cards {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
