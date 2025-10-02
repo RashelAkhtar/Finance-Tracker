@@ -5,27 +5,27 @@ import DeptLent from "./Dept&Lent";
 const BudgetCalculator = () => {
   const [money, setMoney] = useState("");
   const [loading, setLoading] = useState(false);
-  const [loadingText, setLoadingText] = useState("Calculating...");
   const [showDeptLent, setShowDeptLent] = useState(false);
   const [panelLoaded, setPanelLoaded] = useState(false);
   const [notHundred, setNotHundred] = useState(false);
+  const [showRatio, setShowRatio] = useState(false);
 
   // Budget Ratio
-  const [ratio, setRatio] = useState(false);
-  const [twentyPercent, setTwentyPercent] = useState(0);
-  const [thirtyPercent, setThirtyPercent] = useState(0);
-  const [fiftyPercent, setFiftyPercent] = useState(0);
-  const [customSavings, setCustomSavings] = useState(20);
-  const [customWants, setCustomWants] = useState(30);
-  const [customNeeds, setCustomNeeds] = useState(50);
+  const [budget, setBudget] = useState({
+    savings: 20,
+    wants: 30,
+    needs: 50,
+    savingsAmount: 0,
+    wantsAmount: 0,
+    needsAmount: 0,
+  });
 
   // Lock background scroll when panel is open
   useEffect(() => {
+    document.body.style.overflow = showDeptLent ? "hidden" : "auto";
     if (showDeptLent) {
-      document.body.style.overflow = "hidden";
       setPanelLoaded(true);
     } else {
-      document.body.style.overflow = "auto";
       const timer = setTimeout(() => setPanelLoaded(false), 300);
       return () => clearTimeout(timer);
     }
@@ -41,29 +41,40 @@ const BudgetCalculator = () => {
     setMoney("");
 
     const delay = Math.floor(Math.random() * 1000) + 2000;
+
+    // time out for the calculating loading animation
     setTimeout(() => {
-      setTwentyPercent((amount * customSavings) / 100);
-      setThirtyPercent((amount * customWants) / 100);
-      setFiftyPercent((amount * customNeeds) / 100);
+      setBudget((prev) => ({
+        ...prev,
+        savingsAmount: (amount * prev.savings) / 100,
+        wantsAmount: (amount * prev.wants) / 100,
+        needsAmount: (amount * prev.needs) / 100,
+      }));
       setLoading(false);
     }, delay);
   };
 
-  const toggleDeptLent = () => {
-    setShowDeptLent(!showDeptLent);
-  };
-
   // Auto Hide error after a few seconds
   useEffect(() => {
-    let timer;
     if (notHundred) {
-      timer = setTimeout(() => {
+      const timer = setTimeout(() => {
         setNotHundred(false);
       }, 4000); // 4 seconds
+      return () => clearTimeout(timer);
     }
-
-    return () => clearTimeout(timer);
   }, [notHundred]);
+
+  const totalPercentage = budget.savings + budget.wants + budget.needs;
+
+  // to handle the ratio
+  const handleRatioSave = () => {
+    if (totalPercentage !== 100) {
+      setNotHundred(true);
+      return;
+    }
+    setNotHundred(false);
+    setShowRatio(false);
+  };
 
   return (
     <div className="budget-container">
@@ -100,21 +111,27 @@ const BudgetCalculator = () => {
         {loading ? (
           <div className="loading-container">
             <div className="loading-spinner"></div>
-            <p className="loading-text">⏳ {loadingText}</p>
+            <p className="loading-text">⏳ Calculating...</p>
           </div>
         ) : (
           <>
             <div className="result-item twenty">
-              <span className="result-label">Savings ({customSavings}%):</span>
-              <span className="result-amount">₹{twentyPercent.toFixed(2)}</span>
+              <span className="result-label">Savings ({budget.savings}%):</span>
+              <span className="result-amount">
+                ₹{budget.savingsAmount.toFixed(2)}
+              </span>
             </div>
             <div className="result-item thirty">
-              <span className="result-label">Wants ({customWants}%):</span>
-              <span className="result-amount">₹{thirtyPercent.toFixed(2)}</span>
+              <span className="result-label">Wants ({budget.wants}%):</span>
+              <span className="result-amount">
+                ₹{budget.wantsAmount.toFixed(2)}
+              </span>
             </div>
             <div className="result-item fifty">
-              <span className="result-label">Needs ({customNeeds}%):</span>
-              <span className="result-amount">₹{fiftyPercent.toFixed(2)}</span>
+              <span className="result-label">Needs ({budget.needs}%):</span>
+              <span className="result-amount">
+                ₹{budget.needsAmount.toFixed(2)}
+              </span>
             </div>
           </>
         )}
@@ -125,7 +142,7 @@ const BudgetCalculator = () => {
         <button
           className="ratio-btn"
           type="button"
-          onClick={() => setRatio(true)}
+          onClick={() => setShowRatio(true)}
         >
           Set Ratio
         </button>
@@ -134,9 +151,7 @@ const BudgetCalculator = () => {
         <button
           type="button"
           className={`dept-toggle-btn ${showDeptLent ? "active" : ""}`}
-          onClick={toggleDeptLent}
-          aria-expanded={showDeptLent}
-          aria-label={showDeptLent ? "Close Debt & Lent" : "Open Debt & Lent"}
+          onClick={() => setShowDeptLent(!showDeptLent)}
         >
           <span className="btn-icon">{showDeptLent ? "←" : "💸"}</span>
           <span className="btn-text">
@@ -148,79 +163,56 @@ const BudgetCalculator = () => {
       {/* Overlay */}
       <div
         className={`dept-overlay ${showDeptLent ? "active" : ""}`}
-        onClick={toggleDeptLent}
+        onClick={() => setShowDeptLent(false)}
       ></div>
 
       {/* Ratio Modal */}
-      {ratio && (
+      {showRatio && (
         <>
-          <div className="ratio-overlay" onClick={() => setRatio(false)}></div>
+          <div
+            className="ratio-overlay"
+            onClick={() => setShowRatio(false)}
+          ></div>
           <div className="ratio-modal">
             <h2>Set Budget Ratio</h2>
 
             {/* Progress Bar */}
             <div
               className={`ratio-progress ${
-                customSavings + customWants + customNeeds === 100
-                  ? "valid"
-                  : "invalid"
+                totalPercentage === 100 ? "valid" : "invalid"
               }`}
             >
               <div
                 className="ratio-progress-fill"
                 style={{
-                  width: `${customSavings + customWants + customNeeds}%`,
+                  width: `${totalPercentage}%`,
                 }}
               ></div>
             </div>
 
-            <label>
-              Savings (%)
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={customSavings}
-                onChange={(e) => setCustomSavings(Number(e.target.value))}
-              />
-            </label>
-            <label>
-              Wants (%)
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={customWants}
-                onChange={(e) => setCustomWants(Number(e.target.value))}
-              />
-            </label>
-            <label>
-              Needs (%)
-              <input
-                type="number"
-                min="0"
-                max="100"
-                value={customNeeds}
-                onChange={(e) => setCustomNeeds(Number(e.target.value))}
-              />
-            </label>
+            {["savings", "wants", "needs"].map((category) => (
+              <label key={category}>
+                {category.charAt(0).toUpperCase() + category.slice(1)} (%)
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={budget[category]}
+                  onChange={(e) =>
+                    setBudget((prev) => ({
+                      ...prev,
+                      [category]: Number(e.target.value),
+                    }))
+                  }
+                />
+              </label>
+            ))}
 
             {notHundred && (
               <p className="ratio-error">❌ Percentages must add up to 100%</p>
             )}
 
-            <button
-              className="ratio-close-btn"
-              type="button"
-              onClick={() => {
-                if (customNeeds + customSavings + customWants !== 100) {
-                  setNotHundred(true);
-                  return;
-                }
-                setNotHundred(false);
-                setRatio(false);
-              }}
-            >
+            <button className="ratio-close-btn" onClick={handleRatioSave}>
               OK
             </button>
           </div>
@@ -235,14 +227,12 @@ const BudgetCalculator = () => {
               <h2>Debt & Lent Manager</h2>
               <button
                 className="close-panel-btn"
-                onClick={toggleDeptLent}
-                aria-label="Close Debt & Lent"
-                type="button"
+                onClick={() => setShowDeptLent(false)}
               >
                 &times;
               </button>
             </div>
-            <DeptLent onClose={toggleDeptLent} />
+            <DeptLent onClose={() => setShowDeptLent(false)} />
           </div>
         )}
       </div>
