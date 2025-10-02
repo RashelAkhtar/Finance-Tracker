@@ -6,29 +6,27 @@ const DeptLent = ({ onClose }) => {
   const [name, setName] = useState("");
   const [deptMoney, setDeptMoney] = useState(0);
   const [lentMoney, setLentMoney] = useState(0);
-  const [action, setAction] = useState("");
   const [records, setRecords] = useState([]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const addRecord = (type) => {
     const amount = parseFloat(money) || 0;
 
-    if (!name.trim() || amount <= 0 || !action) {
+    if (!name.trim() || amount <= 0) {
       return;
     }
 
-    if (action === "dept") {
+    if (type === "dept") {
       setDeptMoney((prev) => prev + amount);
-    } else if (action === "lent") {
+    } else if (type === "lent") {
       setLentMoney((prev) => prev + amount);
     }
 
-    setRecords([
-      ...records,
+    setRecords((prev) => [
+      ...prev,
       {
         name: name.trim(),
         amount,
-        type: action,
+        type,
         date: new Date().toLocaleDateString(),
         id: Date.now(),
       },
@@ -36,7 +34,6 @@ const DeptLent = ({ onClose }) => {
 
     setMoney("");
     setName("");
-    setAction("");
   };
 
   const clearRecords = () => {
@@ -59,7 +56,8 @@ const DeptLent = ({ onClose }) => {
 
   return (
     <div className="dept-lent-container">
-      <form onSubmit={handleSubmit} className="form">
+      {/* prevent default form submit */}
+      <form onSubmit={(e) => e.preventDefault()} className="form">
         <input
           type="text"
           value={name}
@@ -82,32 +80,20 @@ const DeptLent = ({ onClose }) => {
 
         <div className="action-buttons">
           <button
-            className={`btn action-btn dept ${
-              action === "dept" ? "active" : ""
-            }`}
+            className="btn action-btn dept"
             type="button"
-            onClick={() => setAction("dept")}
+            onClick={() => addRecord("dept")}
           >
             💰 Debt
           </button>
           <button
-            className={`btn action-btn lent ${
-              action === "lent" ? "active" : ""
-            }`}
+            className="btn action-btn lent"
             type="button"
-            onClick={() => setAction("lent")}
+            onClick={() => addRecord("lent")}
           >
             📤 Lent
           </button>
         </div>
-
-        <button
-          type="submit"
-          className="submit-action-btn"
-          disabled={!name.trim() || !money || !action}
-        >
-          Add Record
-        </button>
       </form>
 
       <div className="summary-cards">
